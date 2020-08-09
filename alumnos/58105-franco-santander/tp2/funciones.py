@@ -24,8 +24,10 @@ def header(text, comentario):
     # Le saco el encabezado a la imagen
     header = text[:15].decode()
     # Le agrego el comentario
+    width = header[2:6]
+    height = header[7:10]
     header = header[0:2] + "\n" + comentario + header[2:]
-    return header
+    return header, width, height
 
 
 def calcular_posicion(imagen):
@@ -71,6 +73,14 @@ def argumentos():
         print(text)
         sys.exit()
     try:
+        if args.message == "":
+            raise ArchivoError()
+    except ArchivoError:
+        text += "Error. Ingrese un archivo txt que se encuentre en el"
+        text += " mismo directorio"
+        print(text)
+        sys.exit()
+    try:
         if int(args.size) < 0:
             raise ValError()
     except ValError:
@@ -81,5 +91,23 @@ def argumentos():
         archivo.close()
     except FileNotFoundError:
         print("Error. El archivo no se encuentra en el directorio")
+        sys.exit()
+    try:
+        archivo = open(args.message, "rb")
+        archivo.close()
+    except FileNotFoundError:
+        print("Error. El archivo no se encuentra en el directorio")
+        sys.exit()
+    try:
+        if int(args.interleave) < 0:
+            raise ValError()
+    except ValError:
+        print("Error. El interleave no puede ser negativo")
+        sys.exit()
+    try:
+        if int(args.offset) < 0:
+            raise ValError()
+    except ValError:
+        print("Error. El offset no puede ser negativo")
         sys.exit()
     return args
